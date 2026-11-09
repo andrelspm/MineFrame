@@ -1,0 +1,7 @@
+ "use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { getSupabase } from "@/lib/supabase";
+import type { Project } from "@/lib/types";
+export default function ProjectsAdmin(){const [items,setItems]=useState<Project[]>([]);const [loading,setLoading]=useState(true);const router=useRouter();useEffect(()=>{async function run(){const {data:{user}}=await getSupabase().auth.getUser();if(!user){router.replace("/admin/login");return;}const {data:p}=await getSupabase().from("profiles").select("is_admin").eq("id",user.id).single();if(!p?.is_admin){router.replace("/admin/login");return;}const {data}=await getSupabase().from("projects").select("*").order("created_at",{ascending:false});setItems((data||[]) as Project[]);setLoading(false);}run();},[router]);return <div className="admin-main standalone-admin"><div className="admin-top"><div><div className="eyebrow">ADMIN / CONTENIDO</div><h1>Proyectos.</h1></div><Link className="button button-light" href="/admin/proyectos/nuevo">＋ Crear proyecto</Link></div>{loading?"Cargando...":items.map(p=><div className="admin-project-row" key={p.id}><div className="admin-project-thumb">{p.thumbnail_url?<img src={p.thumbnail_url}/>: "▧"}</div><div className="admin-project-info"><b>{p.title}</b><span>{p.category} · {p.published?"Publicado":"Borrador"}</span></div><Link href={`/admin/proyectos/${p.id}`}>Editar ↗</Link></div>)}</div>}
