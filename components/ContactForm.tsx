@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 
 const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "mineframe.contact@gmail.com";
+const web3formsKey = process.env.NEXT_PUBLIC_WEB3FORMS_KEY || "";
 const services = ["Edición para YouTube", "Shorts / TikTok / Reels", "Edición cinematográfica", "Showcase de mods", "Otro proyecto"];
 
 export function ContactForm() {
@@ -21,14 +22,37 @@ export function ContactForm() {
     const values = new FormData(form);
     const data: Record<string, string> = { "form-name": "contacto" };
     values.forEach((v, k) => { data[k] = String(v); });
+    if (data["bot-field"]) { form.reset(); setOk(true); setStatus("¡Mensaje enviado!"); return; }
     setSending(true); setStatus(""); setOk(null);
     try {
-      const res = await fetch("/__forms.html", {
+      // Copia en Netlify Forms (se guarda en el panel; no bloquea el envío).
+      const netlify = fetch("/__forms.html", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams(data).toString(),
-      });
-      if (!res.ok) throw new Error("fallo");
+      }).then((r) => r.ok).catch(() => false);
+      let sent: boolean;
+      if (web3formsKey) {
+        // Envío del correo gratuito a través de Web3Forms.
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            access_key: web3formsKey,
+            subject: "Nuevo mensaje de contacto en MINEFRAME: " + data.servicio,
+            from_name: "Web MINEFRAME",
+            name: data.nombre,
+            email: data.email,
+            servicio: data.servicio,
+            message: data.mensaje,
+          }),
+        });
+        const json = await res.json().catch(() => ({}));
+        sent = res.ok && json.success !== false;
+      } else {
+        sent = await netlify;
+      }
+      if (!sent) throw new Error("fallo");
       form.reset(); setService(services[0]); setOk(true);
       setStatus("¡Mensaje enviado! Te responderé al correo que dejaste.");
     } catch {
@@ -41,7 +65,9 @@ export function ContactForm() {
     } finally { setSending(false); }
   }
 
-  return <form className="contact-form" name="contacto" onSubmit={submit}>
+  return <form className="contact-form" name="contacto" method="POST" data-netlify="true" netlify-honeypot="bot-field" onSubmit={submit}>
+    <input type="hidden" name="form-name" value="contacto" />
+    <input type="hidden" name="subject" value="Nuevo mensaje de contacto en MINEFRAME (%{submissionId})" />
     <p className="hp" aria-hidden="true"><label>No llenar<input name="bot-field" tabIndex={-1} autoComplete="off" /></label></p>
     <label>Tu nombre<input name="nombre" autoComplete="name" placeholder="¿Cómo te llamas?" required /></label>
     <label>Correo electrónico<input name="email" type="email" autoComplete="email" placeholder="tu@correo.com" required /></label>
