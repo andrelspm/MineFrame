@@ -5,6 +5,8 @@ import { Reveal } from "@/components/Reveal";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { Project } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 export default async function Portfolio() {
   let projects: Project[] = [];
   if (isSupabaseConfigured()) {

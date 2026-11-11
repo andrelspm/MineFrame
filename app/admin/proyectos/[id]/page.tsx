@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ProjectEditor } from "@/components/ProjectEditor";
+import { Skeleton } from "@/components/AdminUI";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { Project } from "@/lib/types";
 
@@ -45,6 +46,6 @@ export default function EditProject() {
     return () => { active = false; };
   }, [params.id, router]);
 
-  if (!authorized || loading) return <div className="admin-loading">Verificando acceso...</div>;
+  if (!authorized || loading) return <div className="admin-loading"><Skeleton rows={2} /></div>;
   return project ? <ProjectEditor project={project} /> : <div className="admin-loading">No se encontró el proyecto.</div>;
 }

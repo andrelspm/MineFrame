@@ -9,6 +9,8 @@ import { MagneticLink } from "@/components/MagneticLink";
 import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { Project } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 async function getProjects(): Promise<Project[]> {
   if (!isSupabaseConfigured()) return [];
   try {
