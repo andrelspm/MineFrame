@@ -1,16 +1,25 @@
- "use client";
-import { useEffect, useState } from "react";
+"use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
-import type { Project } from "@/lib/types";
-import { Logo } from "@/components/Logo";
+import { useAdmin, useProjects } from "@/lib/useAdmin";
+import { AdminShell } from "@/components/AdminShell";
+import { ProjectList } from "@/components/ProjectList";
+import { AnimatedNumber, Skeleton } from "@/components/AdminUI";
 
-export default function Admin(){
- const [loading,setLoading]=useState(true);const [projects,setProjects]=useState<Project[]>([]);const [email,setEmail]=useState("");const [error,setError]=useState("");const router=useRouter();
- useEffect(()=>{async function load(){if(!isSupabaseConfigured()){setError("Configura Supabase en .env.local y ejecuta el SQL incluido en README.");setLoading(false);return;}const {data:{user}}=await getSupabase().auth.getUser();if(!user){router.replace("/admin/login");return;}setEmail(user.email||"");const {data:profile}=await getSupabase().from("profiles").select("is_admin").eq("id",user.id).single();if(!profile?.is_admin){await getSupabase().auth.signOut();router.replace("/admin/login");return;}const {data,error}=await getSupabase().from("projects").select("*").order("created_at",{ascending:false});if(error)setError(error.message);setProjects((data||[]) as Project[]);setLoading(false);}load();},[router]);
- async function logout(){await getSupabase().auth.signOut();router.push("/admin/login");router.refresh();}
- async function remove(id:string){if(!confirm("¿Eliminar este proyecto?"))return;const {error}=await getSupabase().from("projects").delete().eq("id",id);if(error){setError(error.message);return;}setProjects(p=>p.filter(x=>x.id!==id));}
- if(loading)return <div className="admin-loading">Cargando panel MINEFRAME...</div>;
- return <div className="admin-shell"><aside className="admin-sidebar"><Logo/><div className="admin-nav-label">ADMINISTRACIÓN</div><Link className="active" href="/admin">▦　Resumen</Link><Link href="/admin/proyectos">▤　Proyectos</Link><Link href="/admin/media">▧　Biblioteca multimedia</Link><Link href="/">↗　Ver sitio público</Link><div className="admin-side-bottom"><span>{email}</span><button onClick={logout}>Cerrar sesión ↗</button></div></aside><main className="admin-main"><div className="admin-top"><div><div className="eyebrow">MINEFRAME / PANEL</div><h1>Resumen general.</h1></div><Link className="button button-light" href="/admin/proyectos/nuevo">＋ Nuevo proyecto</Link></div>{error&&<div className="notice">{error}</div>}<div className="stats-grid"><div><span>PROYECTOS</span><b>{projects.length}</b></div><div><span>PUBLICADOS</span><b>{projects.filter(p=>p.published).length}</b></div><div><span>BORRADORES</span><b>{projects.filter(p=>!p.published).length}</b></div></div><section className="admin-section"><div className="admin-section-head"><h2>Proyectos recientes</h2><Link href="/admin/proyectos">Gestionar todos ↗</Link></div>{projects.length?projects.map(p=><div className="admin-project-row" key={p.id}><div className="admin-project-thumb">{p.thumbnail_url?<img src={p.thumbnail_url}/>: "▧"}</div><div className="admin-project-info"><b>{p.title}</b><span>{p.category} · {p.published?"Publicado":"Borrador"}</span></div><Link href={`/admin/proyectos/${p.id}`}>Editar</Link><button onClick={()=>remove(p.id)}>Eliminar</button></div>):<div className="empty-admin">Todavía no tienes proyectos. Crea el primero para empezar tu portafolio.</div>}</section></main></div>;
+export default function Admin() {
+  const { email, error: authError } = useAdmin();
+  const { items, setItems, loading, error } = useProjects(email !== null);
+  if (authError) return <div className="admin-loading">{authError}</div>;
+  if (email === null) return <div className="admin-loading"><Skeleton rows={2} /></div>;
+  const published = items.filter(p => p.published).length;
+  return <AdminShell email={email}>
+    <div className="admin-top"><div><div className="eyebrow">MINEFRAME / PANEL</div><h1>Resumen general.</h1></div><Link className="button button-light" href="/admin/proyectos/nuevo">＋ Nuevo proyecto</Link></div>
+    {error && <div className="notice">{error}</div>}
+    <div className="stats-grid">
+      {[["PROYECTOS", items.length], ["PUBLICADOS", published], ["BORRADORES", items.length - published]].map(([label, n], i) => <div className="stat-card" style={{ "--i": i } as React.CSSProperties} key={label as string}><span>{label}</span><b>{loading ? "–" : <AnimatedNumber value={n as number} />}</b></div>)}
+    </div>
+    <div className="quick-actions"><Link href="/admin/proyectos/nuevo">＋ Crear proyecto</Link><Link href="/admin/proyectos">▤ Gestionar proyectos</Link><Link href="/admin/media">▧ Subir archivos</Link><Link href="/" target="_blank">↗ Ver web pública</Link></div>
+    <section className="admin-section"><div className="admin-section-head"><h2>Últimos proyectos creados</h2><Link href="/admin/proyectos">Gestionar todos ↗</Link></div>
+      {loading ? <Skeleton rows={3} /> : <ProjectList items={items.slice(0, 5)} setItems={setItems} empty="Todavía no tienes proyectos. Crea el primero para empezar tu portafolio." />}
+    </section>
+  </AdminShell>;
 }

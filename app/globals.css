@@ -372,3 +372,42 @@ button,input,textarea,select{max-width:100%;min-width:0}
 .service-list>a:hover i,.service-list>a:focus-visible i{transform:translate3d(4px,-4px,0);color:#fff}
 .service-list i{display:inline-block}
 .form-status.ok{color:#bfe5c3}.form-status.err{color:#ffbcbc}.hp{position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden}
+
+/* ===== MINEFRAME 2026: animaciones públicas + panel admin (monocromo) ===== */
+.page-enter{animation:pageEnter .5s var(--motion-ease) both}
+@keyframes pageEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.button{position:relative;overflow:hidden}.button:active{transform:scale(.97)}
+.button:focus-visible,a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.project-card h3{transition:letter-spacing .35s var(--motion-ease)}.project-card:hover h3{letter-spacing:.01em}
+.detail-extra{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:-30px 0 40px}.tag{border:1px solid #3a3a3a;padding:6px 10px;font:10px 'DM Mono',monospace;color:#bbb;transition:border-color .2s,color .2s}.tag:hover{border-color:#fff;color:#fff}
+
+/* Admin */
+.admin-enter{animation:pageEnter .5s var(--motion-ease) both}
+.admin-sidebar>a:not(.brand){position:relative;transition:background .2s,color .2s,padding-left .25s var(--motion-ease)}
+.admin-sidebar>a:not(.brand):hover{padding-left:18px}
+.admin-sidebar>a.active::before{content:"";position:absolute;left:0;top:20%;bottom:20%;width:2px;background:#fff;animation:barIn .35s var(--motion-ease)}
+@keyframes barIn{from{transform:scaleY(0)}to{transform:none}}
+.stat-card{position:relative;background:linear-gradient(160deg,#171717,#0e0e0e);box-shadow:inset 0 1px 0 #ffffff14,0 14px 30px -18px #000;transition:transform .3s var(--motion-ease),border-color .3s;animation:pageEnter .6s var(--motion-ease) both;animation-delay:calc(var(--i,0)*90ms)}
+.stat-card:hover{transform:translateY(-3px);border-color:#666}.stat-card b{font-variant-numeric:tabular-nums;font-size:42px;letter-spacing:-.05em}
+.quick-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.quick-actions a{border:1px solid #303030;padding:11px 14px;font-size:11px;color:#ccc;transition:border-color .2s,background .2s,transform .2s}.quick-actions a:hover{border-color:#fff;background:#161616;transform:translateY(-2px)}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:22px}.toolbar input{flex:1;min-width:220px;background:#141414;border:1px solid #383838;color:#fff;padding:12px 14px;border-radius:0;transition:border-color .2s,box-shadow .2s}.toolbar input:focus{border-color:#aaa;box-shadow:0 0 0 3px #ffffff12;outline:none}
+.segmented{display:flex;border:1px solid #383838}.segmented button{background:none;border:0;color:#999;padding:11px 14px;font-size:11px;cursor:pointer;transition:background .2s,color .2s}.segmented button.active{background:#f0f0f0;color:#080808}.segmented small{opacity:.6;margin-left:3px}
+.admin-project-row{transition:background .25s,opacity .3s,transform .3s var(--motion-ease);animation:rowIn .45s var(--motion-ease) both;animation-delay:calc(var(--i,0)*40ms);flex-wrap:wrap}.admin-project-row:hover{background:#121212}
+.admin-project-row.is-leaving{opacity:0;transform:translateX(24px)}.admin-project-row.is-flash{animation:rowFlash .9s ease}
+@keyframes rowIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes rowFlash{0%,100%{background:transparent}30%{background:#ffffff1c}}
+.admin-project-info{min-width:160px}.admin-project-info span{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block}.status-dot.on{background:#fff;box-shadow:0 0 8px #fff9}.status-dot.off{border:1px solid #777}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}.row-actions a,.row-actions button{border:1px solid #2c2c2c;background:none;color:#bbb;padding:8px 11px;font-size:11px;cursor:pointer;transition:border-color .2s,color .2s,background .2s}.row-actions a:hover,.row-actions button:hover{border-color:#fff;color:#fff}.row-actions .danger:hover{background:#2a1212;border-color:#a44;color:#ffb4b4}
+.toast-stack{position:fixed;right:18px;bottom:18px;display:grid;gap:10px;z-index:100;max-width:min(380px,calc(100vw - 36px))}
+.toast{display:flex;gap:12px;align-items:flex-start;background:#161616f2;border:1px solid #3a3a3a;padding:13px 15px;font-size:12px;line-height:1.5;box-shadow:0 18px 40px -12px #000;backdrop-filter:blur(8px);animation:toastIn .4s var(--motion-ease)}.toast i{font-style:normal;width:18px;height:18px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:10px;background:#fff;color:#080808}.toast-error{border-color:#7a3a3a}.toast-error i{background:#d66;color:#fff}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.modal-backdrop{position:fixed;inset:0;background:#000b;backdrop-filter:blur(4px);display:grid;place-items:center;padding:20px;z-index:90;animation:fadeIn .2s ease}.modal{width:min(100%,460px);background:#0f0f0f;border:1px solid #3a3a3a;padding:28px;box-shadow:0 30px 80px #000;animation:modalIn .35s var(--motion-ease)}.modal h2{margin:0 0 14px;font-size:20px;letter-spacing:-.03em}.modal-body{color:#aaa;font-size:13px;line-height:1.7}.modal-body b{color:#fff}.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;flex-wrap:wrap}.button-danger{background:#e8e8e8;color:#080808;border-color:#e8e8e8}.button-danger:hover{background:#fff}.button:disabled{opacity:.5;cursor:not-allowed}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.skeleton-list{display:grid;gap:12px;width:min(100%,640px)}.skeleton-row{display:flex;gap:16px;align-items:center;padding:13px 0;border-top:1px solid #222}.sk{display:block;background:linear-gradient(90deg,#161616 25%,#232323 50%,#161616 75%);background-size:200% 100%;animation:shimmer 1.4s infinite linear}.sk-thumb{width:78px;height:48px;flex:none}.sk-lines{display:grid;gap:8px;flex:1}.sk-line{height:11px}.sk-short{width:55%}
+@keyframes shimmer{to{background-position:-200% 0}}
+.editor-actions{display:flex;gap:12px;flex-wrap:wrap}.field-error{color:#ffb4b4!important}.preview{border:1px solid #303030;max-width:320px;background:#111;animation:fadeIn .3s}.preview img,.preview video{width:100%;display:block;max-height:220px;object-fit:cover}.editor-form input[type=file]{padding:10px}
+@media(max-width:800px){.row-actions{width:100%}.toast-stack{left:18px}.editor-actions .button{flex:1}}
+@media (prefers-reduced-motion: reduce) {
+  /* Keep MINEFRAME's signature motion available while avoiding only smooth scrolling. */
+  html { scroll-behavior: auto !important; }
+}
