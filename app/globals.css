@@ -408,32 +408,6 @@ button,input,textarea,select{max-width:100%;min-width:0}
 .editor-actions{display:flex;gap:12px;flex-wrap:wrap}.field-error{color:#ffb4b4!important}.preview{border:1px solid #303030;max-width:320px;background:#111;animation:fadeIn .3s}.preview img,.preview video{width:100%;display:block;max-height:220px;object-fit:cover}.editor-form input[type=file]{padding:10px}
 @media(max-width:800px){.row-actions{width:100%}.toast-stack{left:18px}.editor-actions .button{flex:1}}
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: .35s !important;
-    animation-iteration-count: 1 !important;
-    animation-delay: 0ms !important;
-    transition-duration: .2s !important;
-    transition-delay: 0ms !important;
-    scroll-behavior: auto !important;
-  }
-  body::before,
-  .hero::after,
-  .hero-art-frame,
-  .hero-art-frame::before,
-  .hero-art-frame img,
-  .brand-marquee-track,
-  .brand-marquee-track-reverse,
-  .art-caption,
-  .hero-index,
-  .sk {
-    animation: none !important;
-  }
-  .reveal,
-  .reveal.is-visible {
-    filter: none !important;
-    transform: none !important;
-    transition-property: opacity !important;
-  }
-  .page-title, .hero h1 { -webkit-text-fill-color: #fff; background: none; }
-  .page-title span, .hero h1 span { -webkit-text-fill-color: #777; }
+  /* Keep MINEFRAME's signature motion available while avoiding only smooth scrolling. */
+  html { scroll-behavior: auto !important; }
 }
